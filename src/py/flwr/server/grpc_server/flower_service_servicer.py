@@ -27,6 +27,7 @@ from flwr.server.client_manager import ClientManager
 from flwr.server.grpc_server.grpc_bridge import GRPCBridge
 from flwr.server.grpc_server.grpc_client_proxy import GrpcClientProxy
 
+from datetime import datetime
 
 def default_bridge_factory() -> GRPCBridge:
     """Return GRPCBridge instance."""
@@ -104,6 +105,7 @@ class FlowerServiceServicer(transport_pb2_grpc.FlowerServiceServicer):
                     yield server_message
                     # Wait for client message
                     client_message = next(client_message_iterator)
+                    print("~~~~Congratulations, you got a client message~~~~ @", datetime.now().time())
                     bridge.set_client_message(client_message)
                 except StopIteration:
                     break
