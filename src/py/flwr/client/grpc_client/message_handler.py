@@ -21,6 +21,8 @@ from flwr.client.client import Client
 from flwr.common import serde
 from flwr.proto.transport_pb2 import ClientMessage, Reason, ServerMessage
 
+from datetime import datetime
+
 # pylint: disable=missing-function-docstring
 
 
@@ -35,12 +37,18 @@ def handle(
         disconnect_msg, sleep_duration = _reconnect(server_msg.reconnect)
         return disconnect_msg, sleep_duration, False
     if server_msg.HasField("get_parameters"):
-        return _get_parameters(client), 0, True
+        res = _get_parameters(client)
+        print("~~~~Sending client parameters~~~~ @", datetime.now().time())
+        return res, 0, True
     if server_msg.HasField("fit_ins"):
-        return _fit(client, server_msg.fit_ins), 0, True
+        res = _fit(client, server_msg.fit_ins)
+        print("~~~~Sending client fit res~~~~ @", datetime.now().time())
+        return res, 0, True
     if server_msg.HasField("evaluate_ins"):
-        return _evaluate(client, server_msg.evaluate_ins), 0, True
-    raise UnkownServerMessage()
+        res = _evaluate(client, server_msg.evaluate_ins)
+        print("~~~~Sending client evaluate res~~~~ @", datetime.now().time())
+        return res, 0, True
+    raise UnknownServerMessage()
 
 
 def _get_parameters(client: Client) -> ClientMessage:
